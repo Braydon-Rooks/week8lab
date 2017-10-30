@@ -14,7 +14,7 @@ CREATE DATABASE NotesDB;
 USE NotesDB;
 
 
-DROP TABLE Note;
+DROP TABLE note;
 
 CREATE TABLE note( 
     noteId INT(10) NOT NULL AUTO_INCREMENT,
@@ -23,4 +23,10 @@ CREATE TABLE note(
     
     PRIMARY KEY (noteId)
 );
+
+INSERT INTO note
+VALUES(0,NOW(),'TEST');
+
+
+select*from note;
 

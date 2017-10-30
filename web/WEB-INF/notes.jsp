@@ -25,6 +25,8 @@
                     <th>noteId</th>
                     <th>Date Created</th>
                     <th>Contents</th>
+                     <th>Delete</th>
+                      <th>Edit</th>
                 </tr>
                 <c:forEach var="note" items="${notes}">
                     <tr>
@@ -35,36 +37,35 @@
                             <form action="note" method="POST" >
                                 <input type="submit" value="Delete">
                                 <input type="hidden" name="action" value="delete"> 
+                                 <input type="hidden" name="selectedNoteId" value="${note.noteId}">
                             </form>
                         </td>
                         <td>
-                            <form action="note" method="POST">
+                            <form action="note" method="get">
                                 <input type="submit" value="Edit">
-                                <input type="hidden" name="action" value="edit">
+                                <input type="hidden" name="action" value="view">
+                                <input type="hidden" name="selectedNoteId" value="${note.noteId}">
+
                             </form>
                         </td>
                     </tr>
                 </c:forEach>
         </table>
-        <c:if test="${1 == 1}">
-            <h3>Add User</h3>
-            <form action="Note" method="POST">
-                <input type="text" name="noteId"><br>
-                <input type="text" name=""><br>
-                <input type="text" name="lastname"><br>
-                <input type="text" name="password"><br>
-                <input type="text" name="email"><br>
+        <c:if test="${selectedNote == null}">
+            <h3>Add Note</h3>
+            <form action="note" method="POST">
+               Content <input type="text" name="contents"><br>
+              
                 <input type="hidden" name="action" value="add">
                 <input type="submit" value="Save">
             </form>
         </c:if>
-        <c:if test="${1 == 1}">
+        <c:if test="${selectedNote != null}">
             <h3>Edit User</h3>
-            <form action="users" method="POST">
-                <input type="text" name="firstname"><br>
-                <input type="text" name="lastname"><br>
-                <input type="text" name="password"><br>
-                <input type="text" name="email"><br>
+            <form action="note" method="POST">
+                Note ID: <input type="text" name="noteId" value="${selectedNote.noteId}" readonly><br>
+                Date Created: <input type="text" name="dateCreated" value="${selectedNote.dateCreated}" readonly><br>
+                Content: <input type="text" name="content"><br>
                 <input type="hidden" name="action" value="edit">
                 <input type="submit" value="Save">
             </form>

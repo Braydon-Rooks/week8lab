@@ -2,6 +2,7 @@ package businesslogic;
 
 import dataaccess.NoteDB;
 import domainmodel.Note;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,13 +18,13 @@ public class NoteService {
         return noteDB.getNote(id);
     }
 
-    public List<Note> getAll() throws Exception {
-        return noteDB.getAll();
+    public ArrayList<Note> getAll() throws Exception {
+        return  noteDB.getAll();
     }
 
-    public int update(String noteId, Date dateCreated, String Contents) throws Exception {
+    public int update(String noteId, String Contents) throws Exception {
         int id = Integer.parseInt(noteId);
-        Note note = new Note(id,dateCreated,Contents);
+        Note note = new Note(id,null,Contents);
         return noteDB.update(note);
     }
 
@@ -32,9 +33,9 @@ public class NoteService {
         return noteDB.delete(deletedNote);
     }
 
-    public int insert(String noteId, Date dateCreated, String Contents) throws Exception {
-        int id = Integer.parseInt(noteId);
-        Note note = new Note(id,dateCreated,Contents);
+    public int insert(String contents) throws Exception {
+      
+        Note note = new Note(0,new Date(),contents);
         return noteDB.insert(note);
     }
 }

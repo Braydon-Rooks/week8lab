@@ -13,16 +13,24 @@ import java.util.logging.Logger;
 
 public class NoteDB {
 
+    private static java.sql.Date convertUtilToSql(java.util.Date uDate) {
+
+        java.sql.Date sDate = new java.sql.Date(uDate.getTime());
+
+        return sDate;
+
+}
+    
     public int insert(Note note) throws NotesDBException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
 
         try {
-            String preparedQuery = "INSERT INTO Note (noteId,dateCreated,contents) VALUES (?, ?, ?)";
+            String preparedQuery = "INSERT INTO Note (dateCreated,contents) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(preparedQuery);
-            ps.setInt(1, note.getNoteId());
-            ps.setDate(2, (Date) note.getDateCreated());
-            ps.setString(3, note.getContents());
+            
+            ps.setDate(1, convertUtilToSql(note.getDateCreated()));
+            ps.setString(2, note.getContents());
            
             int rows = ps.executeUpdate();
             return rows;
@@ -40,16 +48,15 @@ public class NoteDB {
 
         try {
             String preparedSQL = "UPDATE note SET "
-                    + "noteId = ?, "
-                    + "dateCreated = ?, "
-                    + "contents = ?, "
+                    + "contents = ? "
                     + "WHERE noteId = ?";
 
             PreparedStatement ps = connection.prepareStatement(preparedSQL);
 
-            ps.setInt(1, note.getNoteId());
-            ps.setDate(2, (Date) note.getDateCreated());
-            ps.setString(3, note.getContents());
+            ps.setString(1, note.getContents());
+            ps.setInt(2, note.getNoteId());
+            
+            
            
 
             int rows = ps.executeUpdate();
@@ -62,19 +69,21 @@ public class NoteDB {
         }
     }
 
-    public List<Note> getAll() throws NotesDBException {
+    public ArrayList<Note> getAll() throws NotesDBException {
         ConnectionPool pool = ConnectionPool.getInstance();
         Connection connection = pool.getConnection();
-
+        //ERRORING ON POOL.GETCONNECTION
+        
+        
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             ps = connection.prepareStatement("SELECT * FROM note;");
             rs = ps.executeQuery();
-            List<Note> users = new ArrayList<>();
+            ArrayList<Note> users = new ArrayList<>();
             while (rs.next()) {
-                users.add(new Note(rs.getInt("noteId"),(Date)rs.getDate("Date"), rs.getString("Contents")));
+                users.add(new Note(rs.getInt("noteId"),(Date)rs.getDate("dateCreated"), rs.getString("contents")));
             }
             pool.freeConnection(connection);
             return users;
@@ -112,7 +121,7 @@ public class NoteDB {
 
             Note note = null;
             while (rs.next()) {
-                note = new Note(rs.getInt("noteId"),(Date)rs.getDate("Date"), rs.getString("Contents"));
+                note = new Note(rs.getInt("noteId"),(Date)rs.getDate("dateCreated"), rs.getString("contents"));
             }
             pool.freeConnection(connection);
             return note;

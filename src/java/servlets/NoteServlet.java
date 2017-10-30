@@ -31,11 +31,24 @@ public class NoteServlet extends HttpServlet {
             throws ServletException, IOException {
         ArrayList<Note> notes = null;
         NoteService note = new NoteService();
+        String action = request.getParameter("action");
+        if (action != null && action.equals("view")) {
+            String selectedNoteId = request.getParameter("selectedNoteId");
+            try {
+                Note noteobj = note.get(selectedNoteId);
+                request.setAttribute("selectedNote", noteobj);
+            } catch (Exception ex) {
+                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+}
+        
+        
         try {
-            notes = (ArrayList<Note>) note.getAll();
+            notes =  note.getAll();
             request.setAttribute("notes",notes);
         } catch (Exception ex) {
             Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("shit");
         }
         getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
     }
@@ -43,34 +56,54 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = (String) request.getAttribute("action");
-        String noteId = (String) request.getAttribute("noteId");
-        Date dateCreated = (Date) request.getAttribute("dateCreated");
-        String contents = (String) request.getAttribute("contents");
+        String action = request.getParameter("action");
+        String noteId = request.getParameter("noteId");
+        String selectedNoteId = request.getParameter("selectedNoteId");
+        
+        System.out.println(selectedNoteId);
+        String dateCreated = request.getParameter("dateCreated");
+        String contents = request.getParameter("contents");
+        String edit = request.getParameter("content");
        
         NoteService note = new NoteService();
         
-        if (action.equals("delete")) {
-            try {
-                note.delete(noteId);
-            } catch (Exception ex) {
-                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (action.equals("edit")) {
-            try {
-                note.update(noteId, dateCreated, contents);
-            } catch (Exception ex) {
-                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        else if (action.equals("add"))
+        switch(action)
         {
-            try {
-                note.insert(noteId, dateCreated, contents);
+           case "delete": 
+              try {
+                note.delete(selectedNoteId);
             } catch (Exception ex) {
                 Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+              break;
+           case "edit":
+                try {
+                note.update(noteId, edit);
+            } catch (Exception ex) {
+                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                break;
+           case"add":
+               System.out.println("ADD WORKS");
+            try {
+                note.insert(contents);
+                
+            } catch (Exception ex) {
+                Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+               break;
+           default:
+                  break;
         }
+         ArrayList<Note> notes = null;
+        try {
+            notes = (ArrayList<Note>) note.getAll();
+        } catch (Exception ex) {
+            Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        request.setAttribute("notes", notes);
+          
+         getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
     }
 
 }
