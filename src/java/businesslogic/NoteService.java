@@ -18,13 +18,15 @@ public class NoteService {
         return noteDB.getNote(id);
     }
 
-    public ArrayList<Note> getAll() throws Exception {
+    public List<Note> getAll() throws Exception {
         return  noteDB.getAll();
     }
 
     public int update(String noteId, String Contents) throws Exception {
-        int id = Integer.parseInt(noteId);
-        Note note = new Note(id,null,Contents);
+        
+        
+        Note note = noteDB.getNote(noteId);
+        note.setContents(Contents);
         return noteDB.update(note);
     }
 

@@ -9,7 +9,7 @@ import businesslogic.NoteService;
 import domainmodel.Note;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +29,7 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ArrayList<Note> notes = null;
+        List<Note> notes = null;
         NoteService note = new NoteService();
         String action = request.getParameter("action");
         if (action != null && action.equals("view")) {
@@ -95,9 +95,9 @@ public class NoteServlet extends HttpServlet {
            default:
                   break;
         }
-         ArrayList<Note> notes = null;
+         List<Note> notes = null;
         try {
-            notes = (ArrayList<Note>) note.getAll();
+            notes = note.getAll();
         } catch (Exception ex) {
             Logger.getLogger(NoteServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
